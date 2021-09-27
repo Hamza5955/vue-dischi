@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <Header />
-    <Main />
+    <Header @search="search" />
+    <Main :genere="filter" />
   </div>
 </template>
 
@@ -13,6 +13,16 @@ export default {
   components: {
     Main,
     Header,
+  },
+  data() {
+    return {
+      filter: "all",
+    };
+  },
+  methods: {
+    search(pippo) {
+      this.filter = pippo;
+    },
   },
 };
 </script>

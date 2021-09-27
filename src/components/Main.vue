@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="container mt-5 mb-5">
-      <div class="row gx-5">
+    <div class="container py-5">
+      <div v-if="!loading" class="row gx-5">
         <div
-          v-for="(disco, index) in Albums"
+          v-for="(disco, index) in filtraDischiList"
           :key="index"
           class="col-6 col-md-4 col-lg-2 m-3"
         >
-          <Disck :info="disco" />
+          <MainCard :key="index" :info="disco" />
         </div>
       </div>
     </div>
@@ -16,31 +16,57 @@
 
 <script>
 import axios from "axios";
-import Disck from "./Disck.vue";
+import MainCard from "./Disck.vue";
 export default {
   name: "Main",
   components: {
-    Disck,
+    MainCard,
   },
+  props: ["genere"],
   data() {
     return {
-      Albums: [],
       APIUrl: "https://flynn.boolean.careers/exercises/api/array/music",
+      dischiList: [],
+      loading: true,
     };
   },
+
   created() {
-    this.getAlbum();
+    this.getDischi();
   },
+
   methods: {
-    getAlbum() {
-      axios.get(this.APIUrl).then((result) => {
-        console.log(result.data);
-        this.Albums = result.data.response;
+    getDischi() {
+      axios
+        .get(this.APIUrl)
+        .then((resp) => {
+          // console.log(resp.data);
+          this.dischiList = resp.data.response;
+          //  setTimeout( () => {this.loading = false; }, 5000);
+          this.loading = false;
+        })
+        .catch((err) => {
+          console.log("Error ", err);
+        });
+    },
+  },
+  computed: {
+    filtraDischiList() {
+      if (this.genere === "Seleziona un genere") {
+        return this.dischiList;
+      }
+      let dischiScelti = this.dischiList.filter((item) => {
+        return item.genre.includes(this.genere);
       });
+      return dischiScelti;
     },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+div {
+  color: black;
+}
+</style>
